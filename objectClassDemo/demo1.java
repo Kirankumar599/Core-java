@@ -1,5 +1,5 @@
-package JavaOOPSBYCoderArMy;
-public class innerclass {
+
+public class demo1 {
     public static void main(String[] args) {
         
         Outer outer = new Outer();

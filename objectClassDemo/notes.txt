@@ -1,0 +1,1164 @@
+
+============================================================
+                 JAVA NOTES
+          INNER CLASSES AND OBJECT CLASS
+============================================================
+
+CONTENTS
+--------
+PART 1: INNER CLASSES
+  1. What is a nested class?
+  2. Member Inner Class
+  3. Static Nested Class
+  4. Local Inner Class
+  5. Anonymous Inner Class
+  6. Accessing outer class members
+  7. this and OuterClass.this
+  8. Comparison of inner classes
+  9. Advantages and use cases
+
+PART 2: OBJECT CLASS
+  1. What is the Object class?
+  2. getClass()
+  3. toString()
+  4. equals()
+  5. hashCode()
+  6. clone()
+  7. Cloneable interface
+  8. Shallow copy vs Deep copy
+  9. wait(), notify(), notifyAll()
+  10. finalize()
+  11. Important interview questions
+
+
+============================================================
+PART 1: INNER CLASSES
+============================================================
+
+1. WHAT IS A NESTED CLASS?
+--------------------------
+
+A class declared inside another class is called a nested class.
+
+Example:
+
+class Outer {
+
+    class Inner {
+        void display() {
+            System.out.println("Inside Inner");
+        }
+    }
+}
+
+Here:
+- Outer is the outer class.
+- Inner is the nested class.
+- Since Inner is non-static, it is specifically
+  called a member inner class.
+
+Java has four commonly discussed types of nested classes:
+
+1. Member Inner Class
+2. Static Nested Class
+3. Local Inner Class
+4. Anonymous Inner Class
+
+
+2. MEMBER INNER CLASS
+---------------------
+
+A non-static class declared directly inside another
+class is called a member inner class.
+
+Example:
+
+class Outer {
+
+    int x = 100;
+
+    class Inner {
+
+        void display() {
+            System.out.println("x = " + x);
+        }
+    }
+}
+
+Creating an object:
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Outer outer = new Outer();
+
+        Outer.Inner inner = outer.new Inner();
+
+        inner.display();
+    }
+}
+
+Output:
+x = 100
+
+WHY DO WE USE outer.new Inner()?
+
+Because a member inner class is associated with an
+instance of its outer class.
+
+The inner object needs an enclosing outer object.
+
+Syntax:
+
+Outer outer = new Outer();
+Outer.Inner inner = outer.new Inner();
+
+IMPORTANT POINTS:
+
+1. A member inner class can access all members of
+   the outer class, including private members.
+
+2. It can access both static and non-static members
+   of the outer class.
+
+3. It can have constructors.
+
+4. It cannot declare ordinary static members
+   (subject to Java language-version exceptions).
+
+5. Each inner object is associated with an outer
+   object.
+
+
+3. STATIC NESTED CLASS
+----------------------
+
+A static class declared inside another class is
+called a static nested class.
+
+Example:
+
+class Outer {
+
+    static int x = 100;
+
+    static class Inner {
+
+        void display() {
+            System.out.println("x = " + x);
+        }
+    }
+}
+
+Creating an object:
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Outer.Inner inner = new Outer.Inner();
+
+        inner.display();
+    }
+}
+
+Output:
+x = 100
+
+WHY DON'T WE USE outer.new Inner()?
+
+Because a static nested class does not need an
+instance of the outer class.
+
+IMPORTANT POINTS:
+
+1. It can directly access static members of the
+   outer class.
+
+2. It cannot directly access non-static members
+   of the outer class.
+
+3. It can access private static members.
+
+4. It can have constructors.
+
+5. It is instantiated using the outer class name.
+
+Example of accessing a non-static member:
+
+class Outer {
+
+    int x = 100;
+
+    static class Inner {
+
+        void display() {
+
+            Outer obj = new Outer();
+
+            System.out.println(obj.x);
+        }
+    }
+}
+
+Here we create an Outer object to access x.
+
+
+4. LOCAL INNER CLASS
+--------------------
+
+A class declared inside a method, constructor or
+block is called a local inner class.
+
+Example:
+
+class Outer {
+
+    void display() {
+
+        class Inner {
+
+            void message() {
+                System.out.println("Hello");
+            }
+        }
+
+        Inner obj = new Inner();
+
+        obj.message();
+    }
+}
+
+Output:
+Hello
+
+IMPORTANT POINTS:
+
+1. It can only be accessed within the block where
+   it is declared.
+
+2. It can access members of the outer class.
+
+3. It can access local variables only when those
+   variables are final or effectively final.
+
+4. It cannot be declared public, private or protected.
+
+WHAT IS EFFECTIVELY FINAL?
+
+A local variable that is assigned once and is not
+modified afterwards is effectively final.
+
+Example:
+
+void display() {
+
+    int x = 10;
+
+    class Inner {
+        void print() {
+            System.out.println(x);
+        }
+    }
+
+    Inner obj = new Inner();
+    obj.print();
+}
+
+This works because x is not modified.
+
+If x is modified after assignment, the local inner
+class cannot capture it.
+
+
+5. ANONYMOUS INNER CLASS
+------------------------
+
+A class without a name is called an anonymous class.
+
+It is generally used when we need to create an object
+of a class or implement an interface with a small
+customized implementation.
+
+Example:
+
+abstract class Animal {
+
+    abstract void sound();
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Animal a = new Animal() {
+
+            @Override
+            void sound() {
+                System.out.println("Dog barks");
+            }
+        };
+
+        a.sound();
+    }
+}
+
+Output:
+Dog barks
+
+WHAT HAPPENS HERE?
+
+Animal a = new Animal() { ... };
+
+1. We create an anonymous subclass of Animal.
+2. We provide an implementation of sound().
+3. An object of that anonymous class is created.
+4. Its reference is stored in a.
+
+Anonymous classes are also useful for implementing
+interfaces.
+
+Example:
+
+interface Vehicle {
+    void start();
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Vehicle v = new Vehicle() {
+
+            public void start() {
+                System.out.println("Vehicle started");
+            }
+        };
+
+        v.start();
+    }
+}
+
+Output:
+Vehicle started
+
+IMPORTANT POINTS:
+
+1. An anonymous class has no explicit class name.
+2. It cannot have an explicitly declared constructor.
+3. It can extend one class or implement one interface.
+4. It is useful for short, one-time implementations.
+5. It can access effectively final local variables.
+
+
+6. ACCESSING OUTER CLASS MEMBERS
+--------------------------------
+
+An inner class can access private members of its
+outer class.
+
+Example:
+
+class Outer {
+
+    private int x = 100;
+
+    class Inner {
+
+        void display() {
+            System.out.println(x);
+        }
+    }
+}
+
+Even though x is private, Inner can access it.
+
+WHY?
+
+Because nested classes are considered part of the
+same enclosing top-level class for Java access-control
+purposes.
+
+This is useful for encapsulation.
+
+
+7. this AND OuterClass.this
+----------------------------
+
+The keyword this refers to the current object.
+
+Inside an inner class, this refers to the inner
+class object.
+
+OuterClass.this refers to the enclosing outer object.
+
+Example:
+
+class Outer {
+
+    int x = 10;
+
+    class Inner {
+
+        int x = 20;
+
+        void display() {
+
+            System.out.println(x);
+
+            System.out.println(this.x);
+
+            System.out.println(Outer.this.x);
+        }
+    }
+}
+
+Output:
+20
+20
+10
+
+Explanation:
+
+x                 -> Inner class x
+this.x            -> Inner class x
+Outer.this.x      -> Outer class x
+
+
+8. COMPARISON OF NESTED CLASSES
+-------------------------------
+
+Member Inner Class:
+- Declared directly inside outer class.
+- Non-static.
+- Requires outer object.
+- Can access outer instance members.
+
+Static Nested Class:
+- Declared using static.
+- Does not require outer object.
+- Can directly access outer static members.
+- Cannot directly access outer instance members.
+
+Local Inner Class:
+- Declared inside a method or block.
+- Scope is limited to that block.
+- Can capture effectively final local variables.
+
+Anonymous Inner Class:
+- Has no explicit name.
+- Used for one-time implementations.
+- Cannot have an explicitly declared constructor.
+
+
+9. ADVANTAGES AND USE CASES
+---------------------------
+
+1. Logical grouping:
+   Related classes can be grouped together.
+
+2. Encapsulation:
+   Inner classes can access private outer members.
+
+3. Readability:
+   Helps organize classes that are useful only
+   within another class.
+
+4. Event handling:
+   Anonymous classes were commonly used for
+   event listeners in GUI applications.
+
+5. Implementation hiding:
+   Internal helper classes can be kept inside
+   their enclosing class.
+
+
+============================================================
+PART 2: OBJECT CLASS
+============================================================
+
+1. WHAT IS THE OBJECT CLASS?
+----------------------------
+
+Object is the root class of the Java class hierarchy.
+
+It belongs to:
+
+java.lang.Object
+
+Every Java class directly or indirectly inherits
+from Object, unless it is a primitive type.
+
+Example:
+
+class Student {
+}
+
+This is conceptually similar to:
+
+class Student extends Object {
+}
+
+Because Java automatically provides Object as the
+superclass when no other superclass is specified.
+
+Example:
+
+class A {
+}
+
+class B extends A {
+}
+
+Here:
+- B extends A.
+- A extends Object.
+- Therefore B indirectly inherits Object.
+
+Object provides important methods that are available
+to ordinary Java objects.
+
+
+2. getClass()
+-------------
+
+Purpose:
+Returns the runtime class of an object.
+
+Syntax:
+
+object.getClass()
+
+Example:
+
+class A {
+}
+
+class B extends A {
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        A a = new A();
+
+        A b = new B();
+
+        System.out.println(a.getClass().getName());
+
+        System.out.println(b.getClass().getName());
+    }
+}
+
+Output:
+
+A
+B
+
+IMPORTANT CONCEPT:
+
+A a = new A();
+
+Reference type = A
+Actual object type = A
+
+A b = new B();
+
+Reference type = A
+Actual object type = B
+
+getClass() returns the actual runtime class,
+not merely the reference type.
+
+IMPORTANT POINTS:
+
+1. getClass() is a final method.
+2. It returns a Class object.
+3. It is useful in runtime type inspection.
+4. It cannot be overridden.
+
+
+3. instanceof OPERATOR
+-----------------------
+
+instanceof is an operator, not an Object class method.
+
+It checks whether an object is an instance of
+a particular class or its subclass, or implements
+a particular interface.
+
+Example:
+
+class A {
+}
+
+class B extends A {
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        A a = new A();
+
+        A b = new B();
+
+        System.out.println(a instanceof A);
+
+        System.out.println(b instanceof B);
+
+        System.out.println(b instanceof A);
+    }
+}
+
+Output:
+
+true
+true
+true
+
+Explanation:
+
+b refers to an object of B.
+
+B extends A.
+
+Therefore the object is an instance of both
+B and A.
+
+NOTE:
+For a null reference, instanceof returns false.
+
+
+4. toString()
+-------------
+
+Purpose:
+Returns a string representation of an object.
+
+Example:
+
+class Student {
+
+    String name;
+    int age;
+
+    Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Student s = new Student("John", 20);
+
+        System.out.println(s.toString());
+    }
+}
+
+Default output looks similar to:
+
+Student@5acf9800
+
+WHY?
+
+The default Object.toString() implementation
+produces a string containing:
+
+ClassName@hexadecimalHashCode
+
+We can override toString() to provide meaningful
+information.
+
+Example:
+
+@Override
+public String toString() {
+
+    return "Name: " + name + ", Age: " + age;
+}
+
+Now output:
+
+Name: John, Age: 20
+
+IMPORTANT:
+When we print an object using System.out.println(),
+Java calls its toString() method.
+
+
+5. equals()
+------------
+
+Purpose:
+Checks whether two objects are equal.
+
+The default Object.equals() implementation checks
+reference identity, essentially the same as ==.
+
+Example:
+
+class Student {
+
+    String name;
+    int age;
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Student s1 = new Student();
+        Student s2 = new Student();
+
+        System.out.println(s1 == s2);
+
+        System.out.println(s1.equals(s2));
+    }
+}
+
+Output:
+
+false
+false
+
+WHY?
+
+s1 and s2 refer to two different objects.
+
+Overriding equals() allows us to compare objects
+based on their contents.
+
+Example:
+
+import java.util.Objects;
+
+class Student {
+
+    String name;
+    int age;
+
+    Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj)
+            return true;
+
+        if (!(obj instanceof Student))
+            return false;
+
+        Student other = (Student) obj;
+
+        return age == other.age
+                && Objects.equals(name, other.name);
+    }
+}
+
+Now two Student objects with the same name and age
+can be considered equal.
+
+
+6. hashCode()
+-------------
+
+Purpose:
+Returns an integer hash code for an object.
+
+Syntax:
+
+object.hashCode()
+
+Example:
+
+Student s1 = new Student("John", 20);
+
+System.out.println(s1.hashCode());
+
+IMPORTANT:
+
+1. hashCode() returns an int.
+2. It is commonly used by hash-based collections.
+3. HashMap and HashSet use hash codes to organize
+   objects into buckets.
+4. Different objects can have the same hash code.
+   This is called a hash collision.
+
+EQUALS AND HASHCODE CONTRACT:
+
+If two objects are equal according to equals(),
+they must return the same hash code.
+
+If two objects have the same hash code, they are
+not necessarily equal.
+
+Whenever equals() is overridden, hashCode() should
+also be overridden consistently.
+
+Example:
+
+@Override
+public int hashCode() {
+
+    return Objects.hash(name, age);
+}
+
+WHY IS THIS IMPORTANT?
+
+HashSet and HashMap depend on the equals() and
+hashCode() contract to work correctly with custom
+objects.
+
+
+7. clone()
+-----------
+
+Purpose:
+Creates and returns a copy of an object.
+
+The clone() method is declared in Object.
+
+Its return type is Object.
+
+Basic syntax:
+
+protected native Object clone()
+        throws CloneNotSupportedException;
+
+IMPORTANT:
+The method is protected in Object.
+
+To expose cloning to other code, a class commonly
+overrides clone() with public or protected access.
+
+Example:
+
+class Student implements Cloneable {
+
+    String name;
+    int age;
+
+    Student(String name, int age) {
+
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    protected Object clone()
+            throws CloneNotSupportedException {
+
+        return super.clone();
+    }
+}
+
+Using clone():
+
+public class Main {
+
+    public static void main(String[] args)
+            throws CloneNotSupportedException {
+
+        Student s1 = new Student("John", 20);
+
+        Student s2 = (Student) s1.clone();
+
+        System.out.println(s1.name);
+        System.out.println(s2.name);
+    }
+}
+
+Output:
+
+John
+John
+
+WHAT DOES super.clone() DO?
+
+super.clone() calls the clone() method of the
+parent class, Object.
+
+Object.clone():
+
+1. Creates a new object of the same runtime class.
+2. Copies the field values from the original object.
+3. Returns the newly created object as Object.
+4. Performs a shallow copy.
+
+WHY DO WE IMPLEMENT Cloneable?
+
+Cloneable is a marker interface.
+
+It tells Object.clone() that cloning is permitted
+for this object's class.
+
+If Cloneable is not implemented, Object.clone()
+throws CloneNotSupportedException.
+
+IMPORTANT:
+Implementing Cloneable alone does not provide a
+public clone() method. We still need to expose or
+override clone() if we want to call it from outside
+the class.
+
+
+8. SHALLOW COPY VS DEEP COPY
+----------------------------
+
+SHALLOW COPY:
+
+A shallow copy copies field values.
+
+For primitive fields, the values are copied.
+
+For reference fields, the references are copied,
+so both objects may point to the same nested object.
+
+Example:
+
+class Address {
+
+    String city;
+}
+
+class Student implements Cloneable {
+
+    String name;
+    Address address;
+
+    @Override
+    protected Object clone()
+            throws CloneNotSupportedException {
+
+        return super.clone();
+    }
+}
+
+If we clone a Student:
+
+Student s2 = (Student) s1.clone();
+
+Both s1 and s2 refer to the SAME Address object.
+
+Therefore:
+
+s2.address.city = "Mysuru";
+
+This change can also be seen through s1.address.city.
+
+DEEP COPY:
+
+A deep copy creates independent copies of nested
+mutable objects as well.
+
+Example:
+
+@Override
+protected Object clone()
+        throws CloneNotSupportedException {
+
+    Student copy = (Student) super.clone();
+
+    copy.address = new Address();
+
+    copy.address.city = this.address.city;
+
+    return copy;
+}
+
+Now the two Student objects have separate Address
+objects.
+
+NOTE:
+Deep copying may require recursively copying nested
+objects. The exact implementation depends on the
+object structure.
+
+
+9. wait(), notify(), notifyAll()
+--------------------------------
+
+These methods are used for communication between
+threads.
+
+They belong to Object class.
+
+wait():
+
+Causes the current thread to wait until it is
+notified or interrupted (or until a timeout if
+using a timed overload).
+
+notify():
+
+Wakes up one thread waiting on the same object's
+monitor. The JVM chooses which waiting thread.
+
+notifyAll():
+
+Wakes up all threads waiting on that object's
+monitor.
+
+IMPORTANT:
+
+1. These methods must be called while owning the
+   object's monitor, usually inside synchronized code.
+
+2. Calling them without owning the monitor results
+   in IllegalMonitorStateException.
+
+3. wait() releases the monitor while waiting.
+
+4. notify() and notifyAll() do not immediately
+   release the monitor. The notifying thread must
+   leave the synchronized region before a notified
+   thread can acquire the monitor.
+
+Example:
+
+synchronized (lock) {
+
+    while (!condition) {
+        lock.wait();
+    }
+
+    // Continue when condition is satisfied.
+}
+
+Thread communication commonly uses these methods
+along with shared state and synchronized blocks.
+
+
+10. finalize()
+---------------
+
+Purpose:
+Historically, finalize() was intended to run before
+an object's garbage collection.
+
+Example:
+
+@Override
+protected void finalize() throws Throwable {
+
+    System.out.println("Object is being cleaned");
+}
+
+IMPORTANT:
+
+1. finalize() is deprecated.
+2. Its execution is not guaranteed.
+3. We cannot predict when or whether it will run.
+4. It should not be used for resource management.
+5. Prefer try-with-resources and AutoCloseable
+   for managing resources.
+
+Modern Java applications should avoid finalize().
+
+
+11. IMPORTANT OBJECT CLASS METHODS
+-----------------------------------
+
+Method              Purpose
+---------------------------------------------------
+getClass()           Returns runtime class information
+toString()           String representation of object
+equals()             Compares logical equality
+hashCode()           Returns an integer hash code
+clone()              Creates a shallow copy by default
+wait()               Makes current thread wait
+notify()             Wakes one waiting thread
+notifyAll()          Wakes all waiting threads
+finalize()           Deprecated finalization mechanism
+
+
+============================================================
+IMPORTANT INTERVIEW QUESTIONS
+============================================================
+
+INNER CLASSES:
+
+1. What is an inner class?
+2. What is the difference between nested and inner
+   classes?
+3. What are the four types of nested classes?
+4. How do you create an object of a member inner class?
+5. What is a static nested class?
+6. Can a static nested class access non-static
+   members of the outer class directly?
+7. Can an inner class access private members?
+8. What is a local inner class?
+9. What is an effectively final variable?
+10. What is an anonymous inner class?
+11. What is the difference between this and
+    OuterClass.this?
+
+OBJECT CLASS:
+
+1. Why is Object called the root class?
+2. What happens when we don't explicitly extend
+   another class?
+3. What does getClass() return?
+4. What is the difference between getClass()
+   and instanceof?
+5. What happens when we print an object?
+6. What is the difference between == and equals()?
+7. Why should we override hashCode() when
+   overriding equals()?
+8. Can two different objects have the same hash code?
+9. What is Cloneable?
+10. What does super.clone() do?
+11. What is the difference between shallow copy
+    and deep copy?
+12. What is the purpose of wait(), notify()
+    and notifyAll()?
+13. Why is finalize() deprecated?
+
+
+============================================================
+PRACTICE PROGRAMS
+============================================================
+
+1. Create a class Outer with a non-static Inner
+   class and access an outer class variable.
+
+2. Create a static nested class and compare its
+   object creation with a member inner class.
+
+3. Create a local inner class inside a method.
+
+4. Implement an interface using an anonymous class.
+
+5. Demonstrate this and OuterClass.this.
+
+6. Create classes A and B where B extends A.
+   Test getClass() and instanceof.
+
+7. Override toString() in a Student class.
+
+8. Override equals() to compare two Student objects
+   using name and age.
+
+9. Override hashCode() consistently with equals().
+
+10. Implement Cloneable and demonstrate cloning.
+
+11. Demonstrate the difference between shallow
+    copying and deep copying using an Address class.
+
+12. Implement a simple producer-consumer example
+    using wait() and notifyAll().
+
+
+============================================================
+END OF NOTES
+============================================================

@@ -1,8 +1,6 @@
-package JavaOOPSBYCoderArMy;
-
 import java.util.Objects;
 
-public class ObjectClass {
+public class demo2 {
     public static void main(String[] args) {
         Student s1 = new Student("Alice",20);
         Student s2 = new Student("Alice",20);

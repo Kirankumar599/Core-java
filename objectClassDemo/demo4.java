@@ -1,8 +1,4 @@
-// Demonstration of inner classes
-package JavaOOPSBYCoderArMy;
-
-
-public class demo2OfInnerClasses {
+public class demo4 {
     public static void main(String[] args) {
         
         Outer outer = new Outer();
